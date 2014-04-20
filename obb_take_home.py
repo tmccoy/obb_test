@@ -1,6 +1,7 @@
 from optparse import OptionParser
 from bs4 import BeautifulSoup
 import urllib2
+from HTMLParser import HTMLParser
 
 usage = "usage: ./obb_take_home.py  [-v verbose] -s [string] "
 parser = OptionParser(usage)
@@ -17,9 +18,15 @@ parse = BeautifulSoup(page_html)
 
 table = parse.find('table', {'id': "SosContent_SosContent_dgCorps"})
 
-print table
+string_list = []
+for string in table.strings:
+	if string == 'File Report':
+		continue
+	if "\n" not in string:
+		string_list.append(string)
+	
 
-print "______________"
-entity = table.find_all('td')
-
-print entity
+header_list = string_list[1:5]
+data_list = string_list[6:]
+print header_list
+print data_list
