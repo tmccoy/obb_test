@@ -27,7 +27,6 @@ def find_table(html_obj):
 	table = html_obj.find('table', {'id': "SosContent_SosContent_dgCorps"})
 	return table
 
-
 def build_string_list(table):
 	string_list = []
 	for string in table.strings:
@@ -80,7 +79,6 @@ def generate_itemid_dict(link_list):
 
 	return itemid_dict
 
-
 def group_entities(data_list):
 	grouped_data_list = []
 	for i in range(0, len(data_list),4):
@@ -89,7 +87,6 @@ def group_entities(data_list):
 			 grouped_data_list.append(tuple(entity))
 
 	return grouped_data_list
-
 
 def build_entity_dict(grouped_list, itemid_dict):
 	entity_dict = {}
