@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urllib2
 import json
 import datetime
+import sys
 
 usage = "usage: ./obb_take_home.py -s [string] "
 parser = OptionParser(usage)
@@ -29,11 +30,15 @@ def find_table(html_obj):
 
 def build_string_list(table):
 	string_list = []
-	for string in table.strings:
-		if string == 'File Report':
-			continue
-		if "\n" not in string:
-			string_list.append(string)
+	try:
+		for string in table.strings:
+			if string == 'File Report':
+				continue
+			if "\n" not in string:
+				string_list.append(string)
+	except AttributeError:
+		print "No results for provided string"
+		sys.exit()
 
 	return string_list
 
@@ -80,6 +85,7 @@ def generate_itemid_dict(link_list):
 	return itemid_dict
 
 def group_entities(data_list):
+	# group each entities data into a tuple
 	grouped_data_list = []
 	for i in range(0, len(data_list),4):
 		entity = data_list[i:i+4]
@@ -126,15 +132,16 @@ def write_to_file(encoded_entities):
 		f.write(encoded_entities)
 
 
+if __name__ == "__main__":
 
-html_obj = get_html(search_string)
-table = find_table(html_obj)
-string_list = build_string_list(table)
-link_list = build_link_list(table)
-header_list = build_header_list(string_list)
-data_list = build_data_list(string_list)
-itemid_dict = generate_itemid_dict(link_list)
-grouped_list = group_entities(data_list)
-entity_dict = build_entity_dict(grouped_list,itemid_dict)
-encoded_entities = encode_json(entity_dict)
-write_to_file(encoded_entities)
+	html_obj = get_html(search_string)
+	table = find_table(html_obj)
+	string_list = build_string_list(table)
+	link_list = build_link_list(table)
+	header_list = build_header_list(string_list)
+	data_list = build_data_list(string_list)
+	itemid_dict = generate_itemid_dict(link_list)
+	grouped_list = group_entities(data_list)
+	entity_dict = build_entity_dict(grouped_list,itemid_dict)
+	encoded_entities = encode_json(entity_dict)
+	write_to_file(encoded_entities)
