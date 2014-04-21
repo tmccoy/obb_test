@@ -49,8 +49,8 @@ def build_link_list(table):
 		link = unicode(link)
 		if 'statusdef.aspx?' in link or 'ARReportsList.aspx?' in link:
 			continue
-		
-		link_list.append(link)
+		else:
+			link_list.append(link)
 
 	return link_list
 
