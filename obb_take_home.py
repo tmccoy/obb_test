@@ -44,8 +44,8 @@ def build_string_list(table):
 
 def build_link_list(table):
 	link_list = []
-	for link in table.find_all('a'):
 
+	for link in table.find_all('a'):
 		link = unicode(link)
 		if 'statusdef.aspx?' in link or 'ARReportsList.aspx?' in link:
 			continue
@@ -54,11 +54,6 @@ def build_link_list(table):
 
 	return link_list
 
-def build_header_list(string_list):
-	header_list = string_list[1:5]
-
-	return header_list
-
 def build_data_list(string_list):
 	data_list = string_list[6:]
 
@@ -66,20 +61,26 @@ def build_data_list(string_list):
 
 def generate_itemid_dict(link_list):
 	itemid_dict = {}
+
 	for link in link_list:
 		# use some random characters for delimination
+		# find the itemid to build the link for the business
 		qmar_index = link.find("?")
 		greater_than_index = link.find('>')
 		id_string = link[qmar_index:greater_than_index]
 		equals_index = id_string.find("=")
 		quote_index = id_string.find('"')
+
 		itemid = id_string[equals_index+1:quote_index]
 
+		# do some more slicing and find the business name
 		entity_string = link[qmar_index:]
 		greater_than_index = entity_string.find(">")
 		less_than_index = entity_string.find("<")
+
 		entity = entity_string[greater_than_index+1:less_than_index]
 		
+		#add entity name and itemid to dict for building the business link 
 		itemid_dict[(entity)] = itemid
 
 	return itemid_dict
@@ -95,6 +96,7 @@ def group_entities(data_list):
 	return grouped_data_list
 
 def build_entity_dict(grouped_list, itemid_dict):
+	# group all data in a dict for dumping to json
 	entity_dict = {}
 
 	for i in grouped_list:
@@ -137,8 +139,7 @@ if __name__ == "__main__":
 	html_obj = get_html(search_string)
 	table = find_table(html_obj)
 	string_list = build_string_list(table)
-	link_list = build_link_list(table)
-	header_list = build_header_list(string_list)
+	link_list = build_link_list(table)	
 	data_list = build_data_list(string_list)
 	itemid_dict = generate_itemid_dict(link_list)
 	grouped_list = group_entities(data_list)
